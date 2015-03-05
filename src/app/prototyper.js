@@ -17,6 +17,11 @@ angular.module('prototyper', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize',
         url: '/contact',
         templateUrl: 'app/main/contact.html',
         controller: 'MainCtrl'
+      })
+      .state('dnd', {
+        url: '/dnd',
+        templateUrl: 'app/dnd/iframe-outter.html',
+        controller: 'DnDCtrl'
       });
 
     $urlRouterProvider.otherwise('/');
