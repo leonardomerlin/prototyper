@@ -2,5 +2,5 @@
 
 angular.module('prototyper')
   .controller('NavbarCtrl', ['$scope', function ($scope) {
-    $scope.date = new Date();
+    // $scope.date = new Date();
   }]);

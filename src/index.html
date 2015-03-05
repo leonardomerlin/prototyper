@@ -9,6 +9,9 @@
 
     <!-- build:css({.tmp,src}) styles/vendor.css -->
     <link rel="stylesheet" href="app/main/vendor.css">
+    <!-- <link rel="stylesheet" href="bower_components/jqueryui/themes/base/jquery-ui.css"> -->
+    <!-- <link rel="stylesheet" href="bower_components/jqueryui/themes/ui-lightness/jquery-ui.min.css"> -->
+    <!-- <link rel="stylesheet" href="bower_components/jqueryui/themes/ui-lightness/theme.css"> -->
 
     <!-- bower:css -->
     <!-- endbower -->
@@ -26,22 +29,30 @@
     <!--[if lt IE 10]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
+    <div class="container">
+      <div ng-include="'components/layout/navbar.html'"></div>
+    </div>
 
     <div ui-view></div>
 
+    <div class="container">
+      <div ng-include="'components/layout/footer.html'"></div>
+    </div>
+
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
-      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-      e.src='//www.google-analytics.com/analytics.js';
-      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-      ga('create','UA-XXXXX-X');ga('send','pageview');
+      // (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+      // function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+      // e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+      // e.src='//www.google-analytics.com/analytics.js';
+      // r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      // ga('create','UA-XXXXX-X');ga('send','pageview');
     </script>
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <!-- <script src="bower_components/jquery/jquery.js"></script> -->
+    <!-- <script src="bower_components/jqueryui/jquery-ui.js"></script> -->
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
@@ -57,6 +68,7 @@
     <script src="app/prototyper.js"></script>
     <script src="app/main/main.controller.js"></script>
     <script src="components/layout/layout.controller.js"></script>
+    <script src="app/dnd/dnd.controller.js"></script>
 
     <!-- inject:partials -->
     <!-- angular templates will be automaticaly converted in js and inserted here -->
