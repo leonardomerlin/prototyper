@@ -1,6 +1,6 @@
 'use strict';
 
 angular.module('prototyper')
-  .controller('NavbarCtrl', ['$scope', function ($scope) {
+  .controller('NavbarController', ['$scope', function ($scope) {
     // $scope.date = new Date();
   }]);

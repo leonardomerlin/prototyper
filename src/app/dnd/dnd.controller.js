@@ -2,62 +2,96 @@
 
 angular.module('prototyper')
 
-  .factory('uuid', function() {
-    var svc = {
-      new: function() {
-        function _p8(s) {
-          var p = (Math.random().toString(16)+"000000000").substr(2,8);
-          return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+  .controller('DnDController',
+            ['$rootScope', '$scope', 'uuid', 'blockFactory',
+    function ($rootScope,   $scope,   uuid,  blockFactory) {
+      logGroup('DnDController');
+      // Descomente quando usar jQuery
+      jQuery.event.props.push('dataTransfer');
+
+      $scope.sharedObj = {};
+
+      blockFactory.add({
+          'name' : 'My Component 1',
+          'tag': 'div',
+          'class': 'well',
+          // 'innerHTML': 'Texto',
+          'innerHTML': '<treechild></treechild>',
+          // 'raw':'<div class="well" dnd-draggable="" dnd-droppable></div>',
+          'children': [{
+            'id': uuid.new(),
+            'name' : 'My Component 1.1',
+            'tag': 'div',
+            'class': 'alert alert-success',
+            'raw':'<div class="alert alert-success" dnd-draggable="" dnd-droppable></div>',
+            'children': [{
+              'id': uuid.new(),
+              'name' : 'My Component 1.1.1',
+              'tag': 'div',
+              'class': 'panel panel-success',
+              'raw':'<div class="alert alert-success" dnd-draggable="" dnd-droppable></div>',
+              'children': []
+            }]
+          }]
+      });
+
+      blockFactory.add({
+          'name' : 'My Component 2',
+          'tag': 'div',
+          'class': 'alert alert-success',
+          'innerHTML': 'Texto',
+          // 'raw':'<div class="alert alert-success" dnd-draggable="" dnd-droppable></div>',
+          'children': []
+      });
+
+      $scope.rootComponent = blockFactory.getRootComponent();
+      $scope.selectedComponent = blockFactory.getSelectedComponent();
+
+      $scope.treeModel = $scope.rootComponent;
+
+      $scope.treeOptions = {
+        nodeChildren: 'children',
+        dirSelectable: true,
+        injectClasses: {
+          ul: 'tree-list',
+          li: 'tree-item',
+          liSelected: 'tree-item-isSelected',
+          iExpanded: 'tree-item-iconExpanded',
+          iCollapsed: 'tree-item-iconCollapsed',
+          iLeaf: 'tree-item-iconLeaft',
+          label: 'tree-label-custom',
+          labelSelected: 'tree-label-isSelected'
         }
-        return _p8() + _p8(true) + _p8(true) + _p8();
-      },
-
-      empty: function() {
-        return '00000000-0000-0000-0000-000000000000';
       }
-    };
 
-    return svc;
-  })
+      $scope.addChild = function() {
+        log('addChild');
 
-  .controller('DnDCtrl', ['$rootScope', '$scope', '$compile', function ($rootScope, $scope, $compile) {
-    console.log('DnDCtrl...');
-    $scope.sharedObj = {};
+        blockFactory.add({ 'name' : 'Max', 'tag': 'div', 'children' : []});
+      };
 
-    // Descomente quando usar jQuery
-    // jQuery.event.props.push('dataTransfer');
+      $scope.showSelected = function(e) {
+        log('showSelected', e);
+      };
 
-    // $scope.dropped = function(dragEl, dropEl) {
-    $scope.dropped = function() {
-      console.log('dropped called');
+      // $scope.dropped = function(dragEl, dropEl) {
+      $scope.dropped = function() {
+        log('dropped called');
 
-      var dragEl = $rootScope.dragEl;
-      var dropEl = $rootScope.dropEl;
+        var dragEl = $rootScope.dragEl;
+        var dropEl = $rootScope.dropEl;
+        // return false;
+      }
 
-      // function referenced by the drop target
-      //this is application logic, for the demo we just want to color the grid squares
-      //the directive provides a native dom object, wrap with jqlite
-
-      //clear the previously applied color, if it exists
-      // var bgClass = drop.attr('data-color');
-      // if (bgClass) {
-      //   drop.removeClass(bgClass);
-      // }
-
-      //add the dragged color
-      // bgClass = drag.attr("data-color");
-      // drop.addClass(bgClass);
-      // drop.attr('data-color', bgClass);
-
-      //if element has been dragged from the grid, clear dragged color
-      // if (drag.attr("x-lvl-drop-target")) {
-      //   drag.removeClass(bgClass);
-      // }
-      // return false;
-    }
+      // on load
+      // var canvas = $('#canvas');
+      // log('canvas', canvas);
+      logGroupEnd();
   }])
 
-  .directive('dndDraggable', ['$rootScope', 'uuid', function($rootScope, uuid) {
+  .directive('dndDraggable', [
+             '$rootScope', 'uuid',
+    function ($rootScope,   uuid) {
     return {
       // A = attribute, E = Element, C = Class and M = HTML Comment
       restrict:'A',
@@ -73,8 +107,12 @@ angular.module('prototyper')
           _el.attr("id", id);
         }
 
-        _el.bind('dragstart', function(e){
-          console.log('dragstart');
+        element.bind('dragstart', function(e){
+          log('[EVENT] dragstart');
+
+          if (e.stopPropagation) {
+            e.stopPropagation(); // Necessary. Allows us to drop.
+          }
 
           e.dataTransfer.setData('elId', id);
           e.dataTransfer.setData('text', 'aaa');
@@ -82,45 +120,22 @@ angular.module('prototyper')
           $rootScope.$emit('drag-started', _el);
         });
 
-        _el.bind('dragend', function(e){
-          console.log('dragend');
+        element.bind('dragend', function(e){
+          log('[EVENT] dragend');
+
+          if (e.stopPropagation) {
+            e.stopPropagation(); // Necessary. Allows us to drop.
+          }
+
           $rootScope.$emit('drag-ended', _el);
         });
-
-        // var helper = attrs.helper || 'clone';
-        // var revert = attrs.revert || false;
-
-        // element.draggable({
-        //   helper: helper,
-        //   revert: revert,
-        //   // iframeFix: true,
-        //   cursor: 'move'
-        // });
       }
     };
   }])
 
-  // .directive('dndDroppableIframe', function($compile) {
-  //   return {
-  //     // A = attribute, E = Element, C = Class and M = HTML Comment
-  //     restrict: 'A',
-  //     link: function(scope,element, attrs, controller){
-
-  //       if (element.prop('tagName') !== 'IFRAME') { return; }
-
-  //       element.load(function(){
-  //         var contents = element.contents();
-  //         var body = contents.find('body');
-
-  //         body.attr('dnd-droppable', '');
-  //         $compile(body)(scope);
-
-  //       });
-  //     }
-  //   };
-  // })
-
-  .directive('dndDroppable', ['$rootScope', '$compile', 'uuid', function($rootScope, $compile, uuid) {
+  .directive('dndDroppable',
+            ['$rootScope', '$compile', 'uuid',
+    function ($rootScope, $compile, uuid) {
     return {
       // A = attribute, E = Element, C = Class and M = HTML Comment
       restrict: 'A',
@@ -136,39 +151,39 @@ angular.module('prototyper')
             _el.attr("id", id);
         }
 
-        _el.bind('dragover', function(e) {
-          console.log('dragover');
+        element.bind('dragover', function(e) {
+          // log('dragover');
 
           if (e.preventDefault) {
             e.preventDefault(); // Necessary. Allows us to drop.
           }
 
-          // e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+          e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
           return false;
         });
 
-        _el.bind('dragenter', function(e) {
-          console.log('dragenter');
+        element.bind('dragenter', function(e) {
+          log('dragenter');
 
           // this / e.target is the current hover target.
           angular.element(e.target).addClass('drag-hover');
         });
 
-        _el.bind('dragleave', function(e) {
-          console.log('dragleave');
+        element.bind('dragleave', function(e) {
+          log('dragleave');
 
           angular.element(e.target).removeClass('drag-over');  // this / e.target is previous target element.
         });
 
-        _el.bind('drop', function(e) {
-          console.log('drop');
+        element.bind('drop', function(e) {
+          log('drop');
 
           if (e.preventDefault) {
-            e.preventDefault(); // Necessary. Allows us to drop.
+            e.preventDefault();
           }
 
           if (e.stopPropagation) {
-            e.stopPropagation(); // Necessary. Allows us to drop.
+            e.stopPropagation();
           }
 
           // var data = e.dataTransfer.getData('text');
@@ -177,69 +192,38 @@ angular.module('prototyper')
           var elId = e.dataTransfer.getData('elId');
           var src = document.getElementById(elId);
           // src = angular.element(src);
-          console.log('src', src);
 
           // pass parameters by rootScope
           $rootScope.dragEl = src;
           $rootScope.dropEl = dest;
 
           var droppedEl = angular.element(dest);
-          console.log('droppedEl', droppedEl);
 
           // var rawHtml = src.data('raw');
           var rawHtml = src.dataset.raw;
-          console.log('rawHtml', rawHtml);
-
           var compiledEl = ($compile(rawHtml)(scope));
-          console.log('compiledEl', compiledEl);
-
-          compiledEl.data('raw', rawHtml);
-
+          compiledEl.data('template-id', elId);
+          log('compiledEl', compiledEl);
           droppedEl.append(compiledEl);
 
           scope.onDrop();
         });
 
         $rootScope.$on('drag-started', function(el) {
-            console.log('drag-started fired');
+            log('drag-started fired');
 
+            //TODO: if, target is compatible...
             // var el = document.getElementById(id);
             angular.element(el).addClass('drag-target');
         });
 
         $rootScope.$on('drag-ended', function(el) {
-            console.log('drag-ended fired');
+            log('drag-ended fired');
             // var el = document.getElementById(id);
             var _el = angular.element(el);
             _el.removeClass('drag-target');
             _el.removeClass('drag-over');
         });
-
-        // greed => nao propaga o evento de drop.
-        // var greedy = attrs.greedy || true;
-
-        // element.droppable({
-        //   activeClass:'drop-active',
-        //   hoverClass:'drop-hover',
-        //   greedy:greedy,
-        //   drop: function (event, ui) {
-        //     var draggedEl = angular.element(ui.draggable); //.parent();
-        //     // var draggedEl = angular.element(ui.draggable).parent();
-        //     var droppedEl = angular.element(this);
-        //     var rawHtml = angular.element(ui.draggable).data('raw');
-
-        //     var compiledEl = ($compile(rawHtml)(scope));
-
-        //     compiledEl.appendTo(droppedEl);
-
-        //     compiledEl.droppable();
-        //     compiledEl.draggable({
-        //       // helper: 'clone',
-        //       revert: false,
-        //       cursor: 'move'
-        //     });
-        //   }
-        // });
       }
     };
   }]);

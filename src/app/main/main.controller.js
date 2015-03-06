@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototyper')
-  .controller('MainCtrl', function ($scope) {
+  .controller('MainController', function ($scope) {
     $scope.awesomeThings = [
       {
         'key': 'angular',
