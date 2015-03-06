@@ -10,10 +10,8 @@
     <!-- build:css({.tmp,src}) styles/vendor.css -->
     <link rel="stylesheet" href="app/main/vendor.css">
     <!-- <link rel="stylesheet" href="bower_components/jqueryui/themes/base/jquery-ui.css"> -->
-    <!-- <link rel="stylesheet" href="bower_components/jqueryui/themes/ui-lightness/jquery-ui.min.css"> -->
-    <!-- <link rel="stylesheet" href="bower_components/jqueryui/themes/ui-lightness/theme.css"> -->
-
     <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/angular-tree-control/css/tree-control.css" />
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -51,8 +49,7 @@
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
-    <!-- <script src="bower_components/jquery/jquery.js"></script> -->
-    <!-- <script src="bower_components/jqueryui/jquery-ui.js"></script> -->
+    <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
@@ -61,11 +58,17 @@
     <script src="bower_components/lodash/dist/lodash.compat.js"></script>
     <script src="bower_components/restangular/dist/restangular.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/jqueryui/ui/jquery-ui.js"></script>
+    <script src="bower_components/angular-tree-control/angular-tree-control.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
     <!-- build:js({src,.tmp}) scripts/main.js -->
+    <script src="app/utils/console.js"></script>
     <script src="app/prototyper.js"></script>
+    <script src="app/block/BlockFactory.js"></script>
+    <script src="app/block/BlockDirective.js"></script>
+    <script src="app/utils/service.js"></script>
     <script src="app/main/main.controller.js"></script>
     <script src="components/layout/layout.controller.js"></script>
     <script src="app/dnd/dnd.controller.js"></script>

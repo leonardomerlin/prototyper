@@ -2,25 +2,38 @@
   <div class="well">
     Outter Iframe
   </div>
-
+  <div class="row">
+    <div ng-model="selectedComponent">selected: {{selectedComponent.id}}</div>
+    <div>before</div>
+    <domroot dom-model="rootComponent"></domroot>
+    <div>after</div>
+  </div>
   <div class="row">
     <div class="col-lg-8">
 
-      <!-- <div class="iframe-holder">
-        <div id="ifrContainer">
-          <iframe id="ifr" src="/app/dnd/iframe-inner.html" dnd-droppable-iframe=""></iframe>
-        </div>
-      </div> -->
-
       <div class="wrapper">
         <span>wrapper</span>
-        <div id="canvas" dnd-droppable on-drop='dropped()'></div>
+        <div id="canvas" dnd-droppable></div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div id="myTreeControl">
+        <span>myTreeControl</span>
+        <br>
+        <button ng-click="addChild()">Add</button>
+        <treecontrol class="tree-classic"
+           tree-model="treeModel"
+           options="treeOptions"
+           on-selection="showSelected(node)"
+           selected-node="node1">
+           <span id='{{node.id}}'>
+            {{node.tag}}: {{node.name}}
+           </span>
+        </treecontrol>
       </div>
     </div>
   </div>
 </div>
-  dragEl: {{dragEl}}
-  dropEl: {{dropEl}}
 <div id="tools-group">
   Tools...
   <ul>
