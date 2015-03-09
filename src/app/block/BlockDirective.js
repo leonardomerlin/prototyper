@@ -37,11 +37,12 @@ angular.module('prototyper')
         raw = raw.replace(/\{class\}/g, (component.class || ''));
         raw = raw.replace(/\{innerHTML\}/g, (component.name || ''));
 
-        if(component.children && component.children.length > 0){
-          raw = raw.replace(/\{children\}/g, '<domroot ng-repeat="n in node.children" dom-model="n"></domroot>');
-        }else{
-          raw = raw.replace(/\{children\}/g, '');
-        }
+        raw = raw.replace(/\{children\}/g, '<domroot ng-repeat="n in node.children" dom-model="n"></domroot>');
+        // if(component.children && component.children.length > 0){
+        //   raw = raw.replace(/\{children\}/g, '<domroot ng-repeat="n in node.children" dom-model="n"></domroot>');
+        // }else{
+        //   raw = raw.replace(/\{children\}/g, '');
+        // }
 
         this.template = $compile(raw);
       }],
@@ -49,6 +50,15 @@ angular.module('prototyper')
         return function ( scope, element, attrs, dommodelController ) {
 
           scope.$watch("domModel", function updateNodeOnRootScope(newValue) {
+
+            // add shadowDom to root element.
+            if(newValue && newValue.tag === 'root'){
+              var rootEl = element[0];
+              var shadowRoot = rootEl.shadowRoot || rootEl.createShadowRoot();
+              shadowRoot.innerHTML = '<style>' + newValue.style + '</style>' +
+                '<content></content>';
+              // shadowRoot.appendChild('<content></content>');
+            }
 
             if (angular.isArray(newValue)) {
               // typeof newValue === Array
@@ -62,6 +72,7 @@ angular.module('prototyper')
               scope.synteticRoot = scope.node;
               scope.node.children = newValue;
             } else {
+
               // typeof newValue !== Array
               if (angular.equals(scope.node, newValue)){
                 // node === newValue
@@ -86,7 +97,8 @@ angular.module('prototyper')
               element.bind('click', blockFactory.handleClick);
             }
 
-            element.html('').append( clone );
+
+            element.append( clone );
           });
 
           // save the transclude function from compile (which is not bound to a scope as apposed to the one from link)

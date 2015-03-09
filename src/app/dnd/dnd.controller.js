@@ -11,7 +11,7 @@ angular.module('prototyper')
 
       $scope.sharedObj = {};
 
-      blockFactory.add({
+      var component1 = new blockFactory.Component({
           'name' : 'My Component 1',
           'tag': 'div',
           'class': 'well',
@@ -34,15 +34,16 @@ angular.module('prototyper')
             }]
           }]
       });
+      blockFactory.add(component1);
 
-      blockFactory.add({
+      blockFactory.add(new blockFactory.Component({
           'name' : 'My Component 2',
           'tag': 'div',
           'class': 'alert alert-success',
           'innerHTML': 'Texto',
           // 'raw':'<div class="alert alert-success" dnd-draggable="" dnd-droppable></div>',
           'children': []
-      });
+      }));
 
       $scope.rootComponent = blockFactory.getRootComponent();
       $scope.selectedComponent = blockFactory.getSelectedComponent();
@@ -67,7 +68,11 @@ angular.module('prototyper')
       $scope.addChild = function() {
         log('addChild');
 
-        blockFactory.add({ 'name' : 'Max', 'tag': 'div', 'children' : []});
+        // blockFactory.add({ 'name' : 'Max', 'tag': 'div', 'children' : []});
+
+        // log($scope.rootComponent);
+        $scope.rootComponent.style = ':host {background: green;}';
+
       };
 
       $scope.showSelected = function(e) {

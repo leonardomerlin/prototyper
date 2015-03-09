@@ -6,11 +6,60 @@ angular.module('prototyper')
   function( $compile,   uuid  ) {
     logGroup('blockFactory');
 
-    var Component = function(tag, name){
+    var Component = function(attrs){
       this.id = uuid.new();
-      this.tag = tag;
-      this.name = name;
-      this.children = [];
+      this.tag = attrs.tag || 'div';
+      this.name = attrs.name || this.tag;
+      this.class = attrs.class || '';
+      this.children = attrs.children || [];
+
+      if(this.children.length > 0){
+        var child = null;
+        for (var i = this.children.length - 1; i >= 0; i--) {
+          child = this.children[i];
+          if( !( child instanceof Component ) ){
+            this.children[i] = new Component(child);
+            this.children[i].parent = this;
+          }
+        };
+      }
+    };
+
+    Component.prototype.addChild = function (child){
+
+      if( ! child instanceof Component){
+        warn('trying to add a class other than "Component".');
+        return;
+      }
+
+      if( this.isParentOf(child)){
+        warn('"this" already have this child');
+        return;
+      }
+
+      this.children.push(child);
+      child.parent = this;
+
+      return this;
+    };
+
+    Component.prototype.removeChild = function (child){
+      var index = this.children.indexOf(child);
+
+      if( index < 0 ){ return null; }
+
+      this.children.splice(index, 1);
+      child.parent = null;
+
+      return child;
+    };
+
+    Component.prototype.getParent = function(){
+      return this.parent || null;
+    };
+
+    Component.prototype.isParentOf = function (child){
+      return (child.parent && child.parent == this);
     };
 
     Component.prototype.toString = function (){
@@ -19,7 +68,11 @@ angular.module('prototyper')
 
     var selectedComponent = null;
 
-    var rootComponent = new Component('root', 'root');
+    var rootComponent = new Component({
+      tag:'root'
+    });
+    rootComponent.style = ':host {background: red;}';
+    // rootComponent.style = '::content p{background: red;}';
 
 
     function getBlockElement(target){
@@ -29,12 +82,9 @@ angular.module('prototyper')
 
     var service = {
 
+      Component: Component,
       add: function (newComponent) {
-        if(!newComponent.id){
-          newComponent.id = uuid.new();
-        }
-        rootComponent.children.push(newComponent);
-        return null;
+        return rootComponent.addChild(newComponent);
       },
 
       remove: function (component){
@@ -44,7 +94,9 @@ angular.module('prototyper')
       },
 
       move: function (src, dest){
-
+        var parent = src.getParent();
+        var tmp  = parent.removeChild(src);
+        dest.addChild(tmp);
       },
 
       customSearch: function customSearch (callback, component){
@@ -56,6 +108,13 @@ angular.module('prototyper')
         }
       },
 
+      /**
+       * Recursive search
+       * @param  {[type]}   id              [description]
+       * @param  {Function} callback        [description]
+       * @param  {[type]}   parentComponent [description]
+       * @return {[type]}                   [description]
+       */
       findByIdCustom: function findComponentByIdCustom (id, callback, parentComponent){
 
         if(!parentComponent){
